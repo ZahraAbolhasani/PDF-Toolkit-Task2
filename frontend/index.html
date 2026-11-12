@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Toolkit - Multi-Purpose PDF Processing</title>
+    <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PDF Toolkit</h1>
+            <p>ابزار چندمنظوره پردازش فایل‌های PDF</p>
+        </header>
+
+        <main>
+            <section id="home">
+                <h2>ابزارهای اصلی</h2>
+                <div class="tools-grid">
+                    <div class="tool-card" onclick="showTool('images-to-pdf')">
+                        <div class="tool-icon">📄</div>
+                        <h3>تصاویر به PDF</h3>
+                        <p>تبدیل چند تصویر (JPG, PNG, WEBP) به یک فایل PDF</p>
+                    </div>
+                    <div class="tool-card" onclick="showTool('pdf-watermark-removal')">
+                        <div class="tool-icon">✂️</div>
+                        <h3>حذف واترمارک</h3>
+                        <p>حذف واترمارک‌های متنی و تصویری از فایل‌های PDF</p>
+                    </div>
+                    <div class="tool-card" onclick="showTool('pdf-to-word')">
+                        <div class="tool-icon">📝</div>
+                        <h3>PDF به Word</h3>
+                        <p>تبدیل فایل‌های PDF به سندهای Word DOCX</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="images-to-pdf" class="tool-section">
+                <div class="tool-header">
+                    <button class="back-btn" onclick="showHome()">← بازگشت</button>
+                    <h2>تبدیل تصاویر به PDF</h2>
+                </div>
+
+                <div class="upload-container">
+                    <div class="file-upload-area" id="imageUploadArea">
+                        <input type="file" id="imageInput" accept=".jpg,.jpeg,.png,.webp" multiple hidden>
+                        <div class="upload-icon">📤</div>
+                        <h3>تصاویر خود را انتخاب کنید</h3>
+                        <p>فرمت‌های پشتیبانی‌شده: JPG, JPEG, PNG, WEBP</p>
+                        <p>حداکثر 20 تصویر، هر فایل حداکثر 50 مگابایت</p>
+                        <button class="upload-btn" onclick="document.getElementById('imageInput').click()">انتخاب فایل‌ها</button>
+                    </div>
+
+                    <div class="image-preview-container" id="imagePreviewContainer" style="display: none;">
+                        <h3>تصاویر انتخاب‌شده</h3>
+                        <div class="image-list" id="imageList"></div>
+                        <div class="conversion-options">
+                            <div class="option-group">
+                                <label>اندازه صفحه:</label>
+                                <select id="pageSize">
+                                    <option value="fit">اندازه متناسب با تصویر</option>
+                                    <option value="A4">A4</option>
+                                    <option value="A3">A3</option>
+                                    <option value="A5">A5</option>
+                                    <option value="Letter">Letter</option>
+                                    <option value="Legal">Legal</option>
+                                </select>
+                            </div>
+                            <div class="option-group">
+                                <label>جهت:</label>
+                                <select id="orientation">
+                                    <option value="portrait">عمودی</option>
+                                    <option value="landscape">افقی</option>
+                                </select>
+                            </div>
+                            <div class="option-group">
+                                <label>حاشیه (mm):</label>
+                                <input type="number" id="margin" value="20" min="0" max="50">
+                            </div>
+                            <div class="option-group">
+                                <label>نام خروجی:</label>
+                                <input type="text" id="outputFilename" value="output.pdf">
+                            </div>
+                        </div>
+                        <button class="convert-btn" onclick="convertImagesToPDF()">تبدیل به PDF</button>
+                    </div>
+                </div>
+
+                <div class="status-container" id="statusContainer" style="display: none;">
+                    <div class="status-indicator"></div>
+                    <span id="statusText">در حال پردازش...</span>
+                </div>
+
+                <div class="result-container" id="resultContainer" style="display: none;">
+                    <h3>تبدیل موفقیت‌آمیز!</h3>
+                    <p>فایل PDF با موفقیت ایجاد شد</p>
+                    <button class="download-btn" onclick="downloadResult()">دانلود فایل</button>
+                    <button class="save-btn" onclick="saveResult()">ذخیره در دستگاه</button>
+                </div>
+            </section>
+
+            <section id="pdf-watermark-removal" class="tool-section">
+                <div class="tool-header">
+                    <button class="back-btn" onclick="showHome()">← بازگشت</button>
+                    <h2>حذف واترمارک از PDF</h2>
+                </div>
+
+                <div class="upload-container">
+                    <div class="file-upload-area" id="pdfUploadArea">
+                        <input type="file" id="pdfInput" accept=".pdf" hidden>
+                        <div class="upload-icon">📄</div>
+                        <h3>فایل PDF خود را انتخاب کنید</h3>
+                        <p>فرمت پشتیبانی‌شده: PDF</p>
+                        <p>حداکثر 50 مگابایت</p>
+                        <button class="upload-btn" onclick="document.getElementById('pdfInput').click()">انتخاب فایل</button>
+                    </div>
+
+                    <div class="pdf-preview-container" id="pdfPreviewContainer" style="display: none;">
+                        <h3>پیش‌نمایش فایل PDF</h3>
+                        <div class="pdf-info">
+                            <p id="pdfFilename"></p>
+                            <p id="pdfPageCount"></p>
+                        </div>
+                        <div class="pdf-options">
+                            <div class="option-group">
+                                <label>روش حذف:</label>
+                                <select id="removalMethod">
+                                    <option value="auto">اتوماتیک</option>
+                                    <option value="manual">دستی</option>
+                                </select>
+                            </div>
+                            <div class="option-group">
+                                <label>نام خروجی:</label>
+                                <input type="text" id="watermarkOutputFilename" value="clean.pdf">
+                            </div>
+                        </div>
+                        <button class="convert-btn" onclick="removeWatermark()">حذف واترمارک</button>
+                    </div>
+                </div>
+
+                <div class="status-container" id="watermarkStatusContainer" style="display: none;">
+                    <div class="status-indicator"></div>
+                    <span id="watermarkStatusText">در حال پردازش...</span>
+                </div>
+
+                <div class="result-container" id="watermarkResultContainer" style="display: none;">
+                    <h3>حذف واترمارک با موفقیت!</h3>
+                    <p>فایل PDF پاک شده با موفقیت ایجاد شد</p>
+                    <button class="download-btn" onclick="downloadWatermarkResult()">دانلود فایل</button>
+                    <button class="save-btn" onclick="saveWatermarkResult()">ذخیره در دستگاه</button>
+                </div>
+            </section>
+
+            <section id="pdf-to-word" class="tool-section">
+                <div class="tool-header">
+                    <button class="back-btn" onclick="showHome()">← بازگشت</button>
+                    <h2>تبدیل PDF به Word</h2>
+                </div>
+
+                <div class="upload-container">
+                    <div class="file-upload-area" id="pdfToWordUploadArea">
+                        <input type="file" id="pdfToWordInput" accept=".pdf" hidden>
+                        <div class="upload-icon">📝</div>
+                        <h3>فایل PDF خود را انتخاب کنید</h3>
+                        <p>فرمت پشتیبانی‌شده: PDF (متنی یا اسکن‌شده)</p>
+                        <p>حداکثر 50 مگابایت</p>
+                        <button class="upload-btn" onclick="document.getElementById('pdfToWordInput').click()">انتخاب فایل</button>
+                    </div>
+
+                    <div class="pdf-options-container" id="pdfOptionsContainer" style="display: none;">
+                        <h3>گزینه‌های تبدیل</h3>
+                        <div class="pdf-info">
+                            <p id="pdfToWordFilename"></p>
+                            <p id="pdfToWordPageCount"></p>
+                        </div>
+                        <div class="option-group">
+                            <label>صفحات:</label>
+                            <select id="pageRange">
+                                <option value="all">همه صفحات</option>
+                                <option value="1-5">صفحات 1-5</option>
+                                <option value="1,3,5">صفحات 1, 3, 5</option>
+                            </select>
+                        </div>
+                        <div class="option-group">
+                            <label>نام خروجی:</label>
+                            <input type="text" id="wordOutputFilename" value="output.docx">
+                        </div>
+                        <button class="convert-btn" onclick="convertPdfToWord()">تبدیل به Word</button>
+                    </div>
+                </div>
+
+                <div class="status-container" id="pdfToWordStatusContainer" style="display: none;">
+                    <div class="status-indicator"></div>
+                    <span id="pdfToWordStatusText">در حال پردازش...</span>
+                </div>
+
+                <div class="result-container" id="pdfToWordResultContainer" style="display: none;">
+                    <h3>تبدیل به Word با موفقیت!</h3>
+                    <p>فایل Word با موفقیت ایجاد شد</p>
+                    <button class="download-btn" onclick="downloadWordResult()">دانلود فایل</button>
+                    <button class="save-btn" onclick="saveWordResult()">ذخیره در دستگاه</button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>PDF Toolkit - نسخه 1.0.2 | تمامی حقوق محفوظ است</p>
+        </footer>
+    </div>
+
+    <script src="script.js?v=4"></script>
+</body>
+</html>

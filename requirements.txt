@@ -1,0 +1,28 @@
+# PDF Toolkit Dependencies
+# Install with: pip install -r requirements.txt
+# Updated 2026-11-11: latest releases, compatible with Python 3.14
+
+# Core PDF Processing
+PyMuPDF==2.1
+Pillow==13.0.0
+pypdf==7.0.1
+
+# Document Conversion
+python-docx==1.2.0
+
+# Web Framework
+fastapi==0.162.4
+uvicorn[standard]==0.54.0
+python-multipart==0.0.33
+
+# File Handling
+aiofiles==25.1.0
+python-magic-bin==0.4.14
+
+# Development & Testing
+pytest==9.2.0
+httpx==0.28.1
+
+# Optional: OCR (uncomment if needed)
+# pytesseract==0.3.10
+# easyocr==1.7.1
